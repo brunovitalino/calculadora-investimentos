@@ -3,6 +3,8 @@ package br.com.bvinvestimentos.calculadora.api.selic.bacen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -16,7 +18,7 @@ class BacenClientTest {
 
 	@Test
 	void shouldReturnHistoricoTaxasJuros() {
-		HistoricoTaxasJuros historicoTaxasJuros = new HistoricoTaxasJuros();
+		var historicoTaxasJuros = new HistoricoTaxasJuros(new ArrayList<>());
 		when(bacenClient.getHistoricoTaxasJuros()).thenReturn(historicoTaxasJuros);
 		assertEquals(historicoTaxasJuros, bacenClient.getHistoricoTaxasJuros());
 	}

@@ -1,4 +1,4 @@
-package br.com.bvinvestimentos.calculadora.api.bacen;
+package br.com.bvinvestimentos.calculadora.api.selic.bacen;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

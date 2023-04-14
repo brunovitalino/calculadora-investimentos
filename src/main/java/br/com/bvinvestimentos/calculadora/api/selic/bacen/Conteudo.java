@@ -1,4 +1,4 @@
-package br.com.bvinvestimentos.calculadora.api.bacen;
+package br.com.bvinvestimentos.calculadora.api.selic.bacen;
 
 import java.time.LocalDate;
 
