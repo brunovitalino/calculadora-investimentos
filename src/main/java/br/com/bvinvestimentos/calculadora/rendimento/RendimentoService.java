@@ -2,7 +2,11 @@ package br.com.bvinvestimentos.calculadora.rendimento;
 
 import org.springframework.stereotype.Service;
 
-import br.com.bvinvestimentos.calculadora.imposto.Imposto;
+import br.com.bvinvestimentos.calculadora.imposto.ImpostoAteCentoEOitentaDias;
+import br.com.bvinvestimentos.calculadora.imposto.ImpostoAteSetessentosEVinteDias;
+import br.com.bvinvestimentos.calculadora.imposto.ImpostoAteTrezentosESessentaDias;
+import br.com.bvinvestimentos.calculadora.imposto.ImpostoMaiorQueSetessentosEVinteDias;
+import br.com.bvinvestimentos.calculadora.imposto.ImpostoZerado;
 
 @Service
 public class RendimentoService {
@@ -14,12 +18,20 @@ public class RendimentoService {
 		return valorInvestido + (valorInvestido * rendimentoEfetivo);
 	}
 	
-	public Double getRendimentoEfetivo(Double rendimentoBruto, Integer numeroDiasInvestido) {
-		return rendimentoBruto - (rendimentoBruto * Imposto.getImposto(numeroDiasInvestido));
-	}
-	
 	public Double getRendimentoCDI(Double rendimentoCDI, Double aliquotaCDI) {
 		return rendimentoCDI * aliquotaCDI;
+	}
+	
+	public Double getRendimentoEfetivo(Double rendimentoBruto, Integer numeroDiasInvestido) {
+		return rendimentoBruto - (rendimentoBruto * getImposto(numeroDiasInvestido));
+	}
+	
+	public Double getImposto(Integer numeroDiasInvestido) {
+		return new ImpostoAteCentoEOitentaDias(
+				new ImpostoAteTrezentosESessentaDias(
+						new ImpostoAteSetessentosEVinteDias(
+								new ImpostoMaiorQueSetessentosEVinteDias(
+										new ImpostoZerado())))).getImposto(numeroDiasInvestido);
 	}
 	
 	public Double getRendimentoIsento() {
