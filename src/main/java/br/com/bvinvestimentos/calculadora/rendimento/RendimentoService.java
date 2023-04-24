@@ -1,7 +1,14 @@
 package br.com.bvinvestimentos.calculadora.rendimento;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.bvinvestimentos.calculadora.api.selic.SelicAdapter;
 import br.com.bvinvestimentos.calculadora.imposto.ImpostoAteCentoEOitentaDias;
 import br.com.bvinvestimentos.calculadora.imposto.ImpostoAteSetessentosEVinteDias;
 import br.com.bvinvestimentos.calculadora.imposto.ImpostoAteTrezentosESessentaDias;
@@ -11,22 +18,30 @@ import br.com.bvinvestimentos.calculadora.imposto.ImpostoZerado;
 @Service
 public class RendimentoService {
 	
-	public Double getRendimentoTaxavel(Double valorInvestido) {
-		Double rendimentoBruto = getRendimentoCDI(1.10, 0.1365);
-		Integer numeroDiasInvestido = 721;
-		Double rendimentoEfetivo = getRendimentoEfetivo(rendimentoBruto, numeroDiasInvestido);
-		return valorInvestido + (valorInvestido * rendimentoEfetivo);
+	@Autowired
+	SelicAdapter selicAdapter;
+	
+	public List<Rendimento> getRendimentoTaxavel(BigDecimal valorInvestido, Integer numeroDiasInvestido, Integer rendimentoCDI, BigDecimal aliquotaCDI) {
+		var rendimentos = new ArrayList<Rendimento>();
+		rendimentos.add(new Rendimento(TipoRendimento.CDI, getRendimentoEfetivoCDI(valorInvestido, numeroDiasInvestido, rendimentoCDI, aliquotaCDI)));
+		return rendimentos;
 	}
 	
-	public Double getRendimentoCDI(Double rendimentoCDI, Double aliquotaCDI) {
-		return rendimentoCDI * aliquotaCDI;
+	public BigDecimal getRendimentoEfetivoCDI(BigDecimal valorInvestido, Integer numeroDiasInvestido, Integer rendimentoCDI, BigDecimal aliquotaCDI) {
+		BigDecimal rendimentoBruto = getRendimentoCDI(rendimentoCDI, aliquotaCDI);
+		BigDecimal rendimentoEfetivo = getRendimentoEfetivo(rendimentoBruto, numeroDiasInvestido);
+		return valorInvestido.add( valorInvestido.multiply(rendimentoEfetivo) ).setScale(2, RoundingMode.HALF_DOWN);
 	}
 	
-	public Double getRendimentoEfetivo(Double rendimentoBruto, Integer numeroDiasInvestido) {
-		return rendimentoBruto - (rendimentoBruto * getImposto(numeroDiasInvestido));
+	private BigDecimal getRendimentoCDI(Integer rendimentoCDI, BigDecimal aliquotaCDI) {
+		return new BigDecimal(rendimentoCDI).divide(new BigDecimal(100)).multiply( aliquotaCDI.divide(new BigDecimal(100)) );
 	}
 	
-	public Double getImposto(Integer numeroDiasInvestido) {
+	private BigDecimal getRendimentoEfetivo(BigDecimal rendimentoBruto, Integer numeroDiasInvestido) {
+		return rendimentoBruto.subtract( rendimentoBruto.multiply(new BigDecimal(getImposto(numeroDiasInvestido))) );
+	}
+	
+	private Double getImposto(Integer numeroDiasInvestido) {
 		return new ImpostoAteCentoEOitentaDias(
 				new ImpostoAteTrezentosESessentaDias(
 						new ImpostoAteSetessentosEVinteDias(
