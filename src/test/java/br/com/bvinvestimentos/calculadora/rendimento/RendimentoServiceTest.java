@@ -27,7 +27,7 @@ class RendimentoServiceTest {
 	@Test
 	void shouldReturnRendimentoTaxavel() {
 		BigDecimal valorInvestido = new BigDecimal(72000);
-		Integer numeroDiasInvestido = 721;
+		Integer numeroDiasInvestido = 350;
 		BigDecimal taxaSELIC = new BigDecimal(13.75);
 		Integer porcentagemCDI = 110;
 		BigDecimal aliquotaCDI = new BigDecimal(13.65);

@@ -4,12 +4,10 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import br.com.bvinvestimentos.calculadora.api.selic.SelicAdapter;
 
-
-@Service
+// @Service
 public class BacenSelicAdapter implements SelicAdapter {
 	
 	@Autowired

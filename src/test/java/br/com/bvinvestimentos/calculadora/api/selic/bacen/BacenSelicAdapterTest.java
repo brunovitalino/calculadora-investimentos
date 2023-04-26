@@ -12,11 +12,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import br.com.bvinvestimentos.calculadora.api.selic.bacennovo.BacenNovoClient;
+
 @ExtendWith(MockitoExtension.class)
 class BacenSelicAdapterTest {
 	
 	@Mock
 	BacenClient bacenClient;
+	
+	@Mock
+	BacenNovoClient bacenNovoClient;
 
 	@InjectMocks
 	BacenSelicAdapter bacenSelicAdapter;
