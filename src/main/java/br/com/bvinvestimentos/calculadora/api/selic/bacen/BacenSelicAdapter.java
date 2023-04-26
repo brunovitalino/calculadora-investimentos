@@ -1,5 +1,6 @@
 package br.com.bvinvestimentos.calculadora.api.selic.bacen;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,10 @@ public class BacenSelicAdapter implements SelicAdapter {
 	BacenClient bacenClient;
 
 	@Override
-	public Double getSelic() {
-		return bacenClient.getHistoricoTaxasJuros().conteudos().stream()
+	public BigDecimal getSelic() {
+		return new BigDecimal( bacenClient.getHistoricoTaxasJuros().conteudos().stream()
 	      .max(Comparator.comparing(Conteudo::numeroReuniaoCopom))
-	      .get().metaSelic();
+	      .get().metaSelic() );
 	}
 
 }

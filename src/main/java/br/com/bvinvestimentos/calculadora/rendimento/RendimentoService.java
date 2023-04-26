@@ -21,10 +21,21 @@ public class RendimentoService {
 	@Autowired
 	SelicAdapter selicAdapter;
 	
-	public List<Rendimento> getRendimentoTaxavel(BigDecimal valorInvestido, Integer numeroDiasInvestido, Integer rendimentoCDI, BigDecimal aliquotaCDI) {
+	public List<Rendimento> getAllRendimentoTaxavel(BigDecimal valorInvestido, Integer numeroDiasInvestido, Integer rendimentoCDI, BigDecimal aliquotaCDI) {
 		var rendimentos = new ArrayList<Rendimento>();
+		rendimentos.add(new Rendimento(TipoRendimento.SELIC, getRendimentoEfetivoSelic(valorInvestido, numeroDiasInvestido)));
 		rendimentos.add(new Rendimento(TipoRendimento.CDI, getRendimentoEfetivoCDI(valorInvestido, numeroDiasInvestido, rendimentoCDI, aliquotaCDI)));
 		return rendimentos;
+	}
+	
+	public BigDecimal getRendimentoEfetivoSelic(BigDecimal valorInvestido, Integer numeroDiasInvestido) {
+		BigDecimal rendimentoBruto = getRendimentoSELIC(selicAdapter.getSelic());
+		BigDecimal rendimentoEfetivo = getRendimentoEfetivo(rendimentoBruto, numeroDiasInvestido);
+		return valorInvestido.add( valorInvestido.multiply(rendimentoEfetivo) ).setScale(2, RoundingMode.HALF_DOWN);
+	}
+	
+	private BigDecimal getRendimentoSELIC(BigDecimal taxaSELIC) {
+		return taxaSELIC.divide(new BigDecimal(100));
 	}
 	
 	public BigDecimal getRendimentoEfetivoCDI(BigDecimal valorInvestido, Integer numeroDiasInvestido, Integer rendimentoCDI, BigDecimal aliquotaCDI) {
